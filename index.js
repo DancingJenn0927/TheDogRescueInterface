@@ -21,7 +21,6 @@ loading.classList.add('modal__overlay--visible');
     ).then(() => {
     loading.classList.remove("modal__overlay--visible");
    success.classList.add('modal__overlay--visible');
-   document.querySelector('.modal__contact').classList.add('message-sent');
    }).catch(() => {
     loading.classList.remove("modal__overlay--visible");
     alert("The email service is temporarily unavailable. Please contact me directly on jennleah333@gmail.com."
@@ -32,12 +31,10 @@ function closeContactMessage() {
    const form = document.querySelector('#contact__form');
    const loading = document.querySelector('.modal__overlay--loading');
    const success = document.querySelector('.modal__overlay--success');
-   const contactBox = document.querySelector('.modal__contact');
 
    form.reset();
    loading.classList.remove('modal__overlay--visible');
    success.classList.remove('modal__overlay--visible');
-   contactBox.classList.remove('message-sent');
 }
 function toggleModal() {
    isModalOpen = !isModalOpen;

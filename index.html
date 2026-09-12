@@ -54,7 +54,9 @@
         </div>
       </div>
     </nav>
+    <main>
     <header>
+      <section id="search">
         <div class="header__container">
             <div class="header__description">
             <h1>Welcome to <span class="orange">The Dog Rescue Interface</span></h1>
@@ -63,17 +65,17 @@
                 <input type="text" placeholder="Search by state or keyword">
                 <button class="not-loading">Search</button>
             </div>
-            <p>Join us in spreading <span class="orange"><b>awareness</b></span> and <span class="orange"><b>supporting</b></span> the rescue community! <br>Here, we can search by state for dog rescue groups and shelters to easily access their contact information, location and current needs.</p> 
             </div>
+            <p>Join us in spreading <span class="orange"><b>awareness</b></span> and <span class="orange"><b>supporting</b></span> the rescue community! <br>Here, we can search by state for dog rescue groups and shelters to easily access their contact information, location and current needs.</p> 
             <figure class="header__img--wrapper">
                 <img src="assets/0_Untitled-design-2024-05-09T162750693.avif" alt="shelter dogs">
             </figure>
-            <p>Learn about the USA's dog crisis and what you can do to help.</p>
-            <a href="#education">
+             <p class="education__text">Learn about the USA's dog crisis and what you can do to help.</p>
+            <a class="education__link" href="#education">
                 <button class="btn">Education</button>
             </a>
         </div>
-        </div>
+          </section>
      </header>
 </section>
 <section id="about">
@@ -82,19 +84,20 @@
         <h3 class="section__subtitle">
             <span class="orange">The Dog Rescue Interface</span> offers a dog rescue-shelter search feature, in promotion of accessible online advocacy in support of the dog rescue community. We want easy access to locations and contact information of rescue groups. Implementing a collective approach to educate and inform the public nationwide about the dog rescue community and how to stay involved.
             <br>A place to be proactive. The middle man who is meant to fill in the cracks. 
-            <br>Search for local and non-local rescues who need advocacy. This helps our dog shelters maintain space. Attention attracts success in adoptions and fundraising needs. 
-            <br>Your search results will include straight forward information on locations and social media accounts, where you can reach out, share stories, and offer support. Many rescue groups operate heavily on social media where they share updates, fundraising campaigns, and urgent needs for shelter dogs awaiting for fosters and adoptions.
+            <br>Search for local and non-local rescues and dogs who need advocacy. This helps our dog shelters maintain space, and it helps to expose adoptable dogs looking for homes. Attention attracts success in adoptions and fundraising needs. 
+             <br>Your search results will include locations and contact information, so that you can reach out, share stories to social media, and offer support. Many rescue groups operate heavily on social media where they share updates, fundraising campaigns, and urgent needs for shelter dogs awaiting for fosters and adoptions. You can also search by zip code any community discussion, and even search for breeds that need exposure.  
         </h3>
         <img class="about__img" src="assets/pawprintrowyellow.png" alt="paw print row">
         <p class="section__para">
-            See list of current projects and fundraisers for free spay and neutering, rescue sanctuaries and stray projects nationwide:
+            See <span class="orange"><b>list</b></span> of current projects and fundraisers for free spay and neutering, rescue sanctuaries and stray projects nationwide:
             <ul class="section__list">
-                <li><a href="https://www.nostrayleftbehind.com/">No Stray Left Behind</a></li>
-                <li><a href="https://strayproject.com/">The Stray Project</a></li>
-                <li><a href="https://www.unitedspayalliance.org/directory/">United Spay Alliance Directory</a></li>
-                <li><a href="https://dogstarrescue.org/">Dog Star Rescue</a></li>
-                <li><a href="https://www.bdrr.org/">Big Dog Rescue & Rehabilitation</a></li>
-                <li><a href="https://www.loyalpaws.org">Loyal Paws Rescue & Sanctuary</a>
+                <li><a href="https://www.nostrayleftbehind.com/" target="_blank">No Stray Left Behind</a></li>
+                <li><a href="https://strayproject.com/" target="_blank">The Stray Project</a></li>
+                <li><a href="https://www.unitedspayalliance.org/directory/" target="_blank">United Spay Alliance Directory</a></li>
+                <li><a href="https://dogstarrescue.org/" target="_blank">Dog Star Rescue</a></li>
+                <li><a href="https://www.bdrr.org/" target="_blank">Big Dog Rescue & Rehabilitation</a></li>
+                <li><a href="https://www.loyalpaws.org" target="_blank">Loyal Paws Rescue & Sanctuary</a></li>
+                <li><a href="https://linktr.ee/friendsofbenelli" target="_blank">Friends of Benelli Foundation</a></li>
             </ul>
         </p>
     </div>
@@ -105,9 +108,8 @@
         <h3 class="section__subtitle">
         </h3>
         <div class="modal modal__half modal__contact">
-        <i class="fas fa-times modal__exit click" onclick="closeContactMessage()" aria-label="Close confirmation message" role="button" tabindex="0"></i>
         <h3 class="modal__title">
-      Send us a message with any questions, ideas, or serious inquiries regarding the dog rescue community.
+      Send us a message with any questions, ideas, or serious inquiries regarding the dog rescue community and adoption process.
         </h3>
         <form id="contact__form" onsubmit="contact(event)">
             <div class="form__item">
@@ -131,11 +133,45 @@
         </div>
         <div class="modal__overlay modal__overlay--success">
             Thanks for the message! 
+          <button class="modal__exit" type="button" onclick="closeContactMessage()" aria-label="Close confirmation message">
+            <i class="fas fa-times" aria-hidden="true"></i>
+          </button>
         </div>
         </div>
       </div>
     </div>
 </section>
+</main>
+<footer>
+  <div class="container">
+    <div class="row row__column">
+      <a href="#">
+        <figure class="footer__logo">
+          <img src="assets/OfficalTheDogRescueInterface.png" class="footer__logo--img" alt="The Dog Rescue Interface">
+        </figure>
+      </a>
+      <div class="footer__list">
+        <ul class="footer__list--items">
+          <li class="footer__list--item">
+            <a href="#home" class="footer__list--link">Home</a>
+          </li>
+          <li class="footer__list--item">
+            <a href="#about" class="footer__list--link">About</a>
+          </li>
+          <li class="footer__list--item">
+            <a href="#contact" class="footer__list--link">Contact</a>
+          </li>
+          <li class="footer__list--item">
+            <a href="#search" class="footer__list--link">Search</a>
+          </li>
+        </ul>
+      </div>
+       <div class="footer__copyright">Copyright &copy; 2026 The Dog Rescue Interface. All rights reserved.
+       </div>
+
+    </div>
+  </div>
+</footer>
 
 </body>
 </html>
