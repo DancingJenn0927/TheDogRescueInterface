@@ -7,7 +7,7 @@
      <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
   <script src="https://kit.fontawesome.com/c8e4d183c2.js" crossorigin="anonymous"></script>
-  <script src="index.js"></script>
+  <script src="index.js" defer></script>
       <script type="text/javascript"
         src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
 </script>
@@ -62,11 +62,12 @@
             <h1>Welcome to <span class="orange">The Dog Rescue Interface</span></h1>
             <h2>An online network for searching local rescues and advocating for dogs in need.</h2>
             <div class="input-wrapper">
-                <input type="text" placeholder="Search by state or keyword">
-                <button class="not-loading">Search</button>
+              <input id="dog-search" type="search" placeholder="Search by state, breed or keyword">
+              <button id="dog-search-button" class="not-loading" type="button">Search</button>
             </div>
+            <div id="search-results" aria-live="polite"></div>
             </div>
-            <p>Join us in spreading <span class="orange"><b>awareness</b></span> and <span class="orange"><b>supporting</b></span> the rescue community! <br>Here, we can search by state for dog rescue groups and shelters to easily access their contact information, location and current needs.</p> 
+            <p>Join us in spreading <span class="orange"><b>awareness</b></span> and <span class="orange"><b>supporting</b></span> the rescue community! <br>Here, we can search dog rescue groups, shelters and adoptable dogs to easily access their contact information, location and current needs.</p> 
             <figure class="header__img--wrapper">
                 <img src="assets/0_Untitled-design-2024-05-09T162750693.avif" alt="shelter dogs">
             </figure>
