@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: dog-rescue-interface
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: RESCUEGROUPS_API_KEY
+        sync: false

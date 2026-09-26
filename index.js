@@ -45,41 +45,42 @@ function toggleModal() {
    }
 }
 
-async function fetchDogRescueData(query) {
-    const response = await fetch(`/api/dogs?search=${encodeURIComponent(query)}`);
+async function fetchRescueData(query) {
+    const params = new URLSearchParams({ search: query });
+    const response = await fetch(`/api/search?${params}`);
 
     if (!response.ok) {
-        throw new Error(`Search failed (${response.status})`);
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error || `Search failed (${response.status})`);
     }
 
     const data = await response.json();
     return data.data || data;
 }
 
-function renderDogResults(dogs) {
+function renderResults(items) {
     const resultsContainer = document.getElementById('search-results');
     resultsContainer.innerHTML = '';
 
-    if (!dogs.length) {
-        resultsContainer.textContent = 'No dogs found.';
+    if (!items.length) {
+        resultsContainer.textContent = 'No results found.';
         return;
     }
 
-    dogs.forEach((dog) => {
-        const attributes = dog.attributes || dog;
+    items.forEach((item) => {
+        const attributes = item.attributes || item;
+        const isOrganization = item.searchKind === 'organization' || item.type === 'orgs';
         const dogCard = document.createElement('div');
         dogCard.classList.add('dog-card');
 
         const name = document.createElement('h3');
-        name.textContent = attributes.name || 'Unnamed dog';
+        name.textContent = attributes.name || attributes.orgName || 'Unnamed result';
         dogCard.appendChild(name);
 
         const details = document.createElement('p');
-        details.textContent = [
-            attributes.breedPrimary || attributes.breed,
-            attributes.ageString || attributes.age,
-            attributes.city || attributes.state
-        ].filter(Boolean).join(' | ') || 'Details unavailable';
+        details.textContent = isOrganization
+            ? [attributes.city, attributes.state, attributes.email, attributes.phone].filter(Boolean).join(' | ') || 'Contact details unavailable'
+            : [attributes.breedString || attributes.breedPrimary || attributes.breed, attributes.ageString || attributes.age].filter(Boolean).join(' | ') || 'Details unavailable';
         dogCard.appendChild(details);
         resultsContainer.appendChild(dogCard);
     });
@@ -94,8 +95,8 @@ async function searchDogs() {
     resultsContainer.textContent = 'Searching...';
 
     try {
-        const dogs = await fetchDogRescueData(query);
-        renderDogResults(dogs);
+        const results = await fetchRescueData(query);
+        renderResults(results);
     } catch (error) {
         resultsContainer.textContent = error.message;
         console.error(error);

@@ -30,26 +30,18 @@
           <li><a href="#contact" class="nav__link nav__link--primary">Contact</a></li>
           <li><a href="#search" class="nav__link">Search</a></li>
         </ul>
-        <button class="btn__menu" onclick="openMenu()">
+        <button class="btn__menu" onclick="openMenu()" aria-label="Open menu">
           <i class="fas fa-bars"></i>
         </button>
         <div class="menu__backdrop" id="mobile__menu">
-          <button class="btn__menu btn__menu--close" onclick="closeMenu()">
+          <button class="btn__menu btn__menu--close" onclick="closeMenu()" aria-label="Close menu">
             <i class="fas fa-times"></i>
           </button>
           <ul class="menu__links">
-            <li class="menu__list">
-              <a href="#home" class="menu__link" onclick="closeMenu()">Home</a>
-            </li>
-            <li class="menu__list">
-              <a href="#about" class="menu__link" onclick="closeMenu()">About</a>
-            </li>
-            <li class="menu__list">
-              <a href="#contact" class="menu__link" onclick="closeMenu()">Contact</a>
-            </li>
-            <li class="menu__list">
-              <a href="#search" class="menu__link" onclick="closeMenu()">Search</a>
-            </li>
+            <li class="menu__list"><a href="#home" class="menu__link" onclick="closeMenu()">Home</a></li>
+            <li class="menu__list"><a href="#about" class="menu__link" onclick="closeMenu()">About</a></li>
+            <li class="menu__list"><a href="#contact" class="menu__link" onclick="closeMenu()">Contact</a></li>
+            <li class="menu__list"><a href="#search" class="menu__link" onclick="closeMenu()">Search</a></li>
           </ul>
         </div>
       </div>
