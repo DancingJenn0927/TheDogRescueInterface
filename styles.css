@@ -275,6 +275,39 @@ button.not-loading:hover {
   padding: 14px 24px;
   font-size: 18px;
 }
+
+#search-results {
+  width: min(90%, 1000px);
+  margin: 24px auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  text-align: left;
+}
+
+.dog-card {
+  padding: 20px;
+  border: 1px solid #d8dde2;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(46, 49, 53, 0.08);
+}
+
+.dog-card h3 {
+  margin-bottom: 10px;
+  color: #2e3135;
+}
+
+.dog-card p {
+  margin: 6px 0;
+  text-align: left;
+}
+
+.dog-card a {
+  display: inline-block;
+  margin-top: 10px;
+}
+
 .header__img--wrapper {
   padding: 20px;
   z-index: 2;

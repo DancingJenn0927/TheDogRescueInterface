@@ -71,13 +71,16 @@ app.get('/api/search', async (request, response) => {
 				...(Array.isArray(rescues.data) ? rescues.data.map(item => ({ ...item, searchKind: 'organization' })) : []),
 				...(Array.isArray(shelters.data) ? shelters.data.map(item => ({ ...item, searchKind: 'organization' })) : [])
 			];
-			return response.json({ data: results });
+			return response.json({
+				data: results,
+				included: Array.isArray(animals.included) ? animals.included : []
+			});
 		}
 
 		const filters = searchValue
 			? [{ fieldName: 'animals.searchString', operation: 'contains', criteria: searchValue }]
 			: [];
-		const payload = await searchRescueGroups(animalsEndpoint, filters);
+		const payload = await searchRescueGroups(animalsEndpoint, filters, '?include=orgs');
 		response.json(payload);
 	} catch (error) {
 		const message = error.name === 'AbortError'

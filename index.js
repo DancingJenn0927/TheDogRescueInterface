@@ -54,11 +54,46 @@ async function fetchRescueData(query) {
         throw new Error(error.error || `Search failed (${response.status})`);
     }
 
-    const data = await response.json();
-    return data.data || data;
+    const payload = await response.json();
+    return {
+        items: Array.isArray(payload.data) ? payload.data : [],
+        included: Array.isArray(payload.included) ? payload.included : []
+    };
 }
 
-function renderResults(items) {
+function getLocation(attributes) {
+    const location = attributes.animalLocation || attributes.location;
+    if (typeof location === 'string' && location.trim()) {
+        return location.trim();
+    }
+
+    const city = attributes.city || attributes.orgCity || attributes.animalCity;
+    const state = attributes.state || attributes.orgState || attributes.animalState;
+    const postalCode = attributes.postalcode || attributes.postalCode || attributes.zip;
+    const locality = [city, state].filter(Boolean).join(', ');
+    return [locality, postalCode].filter(Boolean).join(' ');
+}
+
+function getExternalLink(attributes) {
+    const value = attributes.animalUrl
+        || attributes.orgUrl
+        || attributes.website
+        || attributes.webSite
+        || attributes.url;
+
+    if (typeof value !== 'string') {
+        return '';
+    }
+
+    try {
+        const url = new URL(value);
+        return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch {
+        return '';
+    }
+}
+
+function renderResults({ items, included }) {
     const resultsContainer = document.getElementById('search-results');
     resultsContainer.innerHTML = '';
 
@@ -67,10 +102,23 @@ function renderResults(items) {
         return;
     }
 
+    const organizations = new Map(
+        included
+            .filter((item) => item.type === 'orgs')
+            .map((item) => [String(item.id), item.attributes || {}])
+    );
+
     items.forEach((item) => {
         const attributes = item.attributes || item;
         const isOrganization = item.searchKind === 'organization' || item.type === 'orgs';
-        const dogCard = document.createElement('div');
+        const organizationRelationships = item.relationships?.orgs?.data;
+        const organizationRelationship = Array.isArray(organizationRelationships)
+            ? organizationRelationships[0]
+            : organizationRelationships;
+        const relatedOrganization = organizationRelationship
+            ? organizations.get(String(organizationRelationship.id))
+            : undefined;
+        const dogCard = document.createElement('article');
         dogCard.classList.add('dog-card');
 
         const name = document.createElement('h3');
@@ -78,10 +126,39 @@ function renderResults(items) {
         dogCard.appendChild(name);
 
         const details = document.createElement('p');
-        details.textContent = isOrganization
-            ? [attributes.city, attributes.state, attributes.email, attributes.phone].filter(Boolean).join(' | ') || 'Contact details unavailable'
-            : [attributes.breedString || attributes.breedPrimary || attributes.breed, attributes.ageString || attributes.age].filter(Boolean).join(' | ') || 'Details unavailable';
+        const location = getLocation(attributes)
+            || (relatedOrganization ? getLocation(relatedOrganization) : '');
+        const detailParts = isOrganization
+            ? [location, attributes.email, attributes.phone]
+            : [
+                attributes.breedString || attributes.breedPrimary || attributes.breed,
+                attributes.ageString || attributes.age,
+                location
+            ];
+        details.textContent = detailParts.filter(Boolean).join(' | ') || 'Location/details unavailable';
         dogCard.appendChild(details);
+
+        const relatedOrganizationName = relatedOrganization?.name || relatedOrganization?.orgName;
+        if (!isOrganization && relatedOrganizationName) {
+            const organizationName = document.createElement('p');
+            organizationName.textContent = `Rescue/Shelter: ${relatedOrganizationName}`;
+            dogCard.appendChild(organizationName);
+        }
+
+        const itemLink = getExternalLink(attributes);
+        const organizationLink = relatedOrganization ? getExternalLink(relatedOrganization) : '';
+        const link = itemLink || organizationLink;
+        if (link) {
+            const linkElement = document.createElement('a');
+            linkElement.href = link;
+            linkElement.target = '_blank';
+            linkElement.rel = 'noopener noreferrer';
+            linkElement.textContent = isOrganization
+                ? 'Visit website'
+                : itemLink ? 'View dog profile' : 'Visit rescue/shelter website';
+            dogCard.appendChild(linkElement);
+        }
+
         resultsContainer.appendChild(dogCard);
     });
 }
@@ -116,4 +193,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-
