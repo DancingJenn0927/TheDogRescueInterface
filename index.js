@@ -129,7 +129,13 @@ function renderResults({ items, included }, containerId = 'search-results') {
         const location = getLocation(attributes)
             || (relatedOrganization ? getLocation(relatedOrganization) : '');
         const detailParts = isOrganization
-            ? [location, attributes.email, attributes.phone]
+            ? [
+                attributes.type,
+                location,
+                attributes.distance ? `${attributes.distance} miles away` : '',
+                attributes.email,
+                attributes.phone
+            ]
             : [
                 attributes.breedString || attributes.breedPrimary || attributes.breed,
                 attributes.ageString || attributes.age,
