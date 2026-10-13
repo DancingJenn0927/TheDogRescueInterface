@@ -30,6 +30,7 @@
           <li><a href="#about" class="nav__link">About</a></li>
           <li><a href="#contact" class="nav__link nav__link--primary">Contact</a></li>
           <li><a href="#search" class="nav__link">Search</a></li>
+          <li><a href="#education" class="nav__link">Education</a></li>
         </ul>
         <button class="btn__menu" onclick="openMenu()" aria-label="Open menu">
           <i class="fas fa-bars"></i>
@@ -43,6 +44,7 @@
             <li class="menu__list"><a href="#about" class="menu__link" onclick="closeMenu()">About</a></li>
             <li class="menu__list"><a href="#contact" class="menu__link" onclick="closeMenu()">Contact</a></li>
             <li class="menu__list"><a href="#search" class="menu__link" onclick="closeMenu()">Search</a></li>
+            <li class="menu__list"><a href="#education" class="menu__link" onclick="closeMenu()">Education</a></li>
           </ul>
         </div>
       </div>
@@ -55,16 +57,25 @@
             <div class="header__description">
             <h1>Welcome to <span class="orange">The Dog Rescue Interface</span></h1>
             <h2>An online network for searching local rescues and advocating for dogs in need.</h2>
-            <div class="input-wrapper">
-              <input id="dog-search" type="search" placeholder="Search by state, breed or keyword">
+               <h3 class="dog-search__title">Find shelters and dogs in need <img class="dog-search__logo" src="assets/search.svg" alt="Search icon"></h3>
+               <div class="input-wrapper">
+              <input id="dog-search" type="search" placeholder="Search by state or breed" aria-label="Search by state or breed">
               <button id="dog-search-button" class="not-loading" type="button">Search</button>
             </div>
             <div id="search-results" aria-live="polite"></div>
+            <h3 class="zip-search__title">Find shelters near you by zip code <img class="zip-search__logo" src="assets/search.svg" alt="ZIP code icon"></h3>
+            <div class="input-wrapper">
+              <input id="zip-search" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}" placeholder="Enter a 5-digit ZIP code" aria-label="ZIP code">
+              <button id="zip-search-button" class="not-loading" type="button">Search</button>
+            </div>
+            <div id="zip-search-results" aria-live="polite"></div>
             </div>
             <p>Join us in spreading <span class="orange"><b>awareness</b></span> and <span class="orange"><b>supporting</b></span> the rescue community! <br>Here, we can search dog rescue groups, shelters and adoptable dogs to easily access their contact information, location and current needs.</p> 
             <figure class="header__img--wrapper">
                 <img src="assets/0_Untitled-design-2024-05-09T162750693.avif" alt="shelter dogs">
             </figure>
+          </section>
+          <section id="education">
              <p class="education__text"><span class="orange"><b>Learn</b></span> all about the rescue process, the USA's dog crisis and what you can do to help.</p>
             <a class="education__link" href="Education_thedogrescueinterface.docx.pdf" target="_blank">
                 <button class="btn">See Education PDF <img class="education__icon" src="assets/file-text.svg" alt="PDF icon"></button>
@@ -80,7 +91,7 @@
             <span class="orange">The Dog Rescue Interface</span> offers a dog rescue-shelter search feature, in promotion of accessible online advocacy in support of the dog rescue community. We want easy access to locations and contact information of rescue groups. Implementing a collective approach to educate and inform the public nationwide about the dog rescue community and how to stay involved.
             <br>A place to be proactive, with access to transformative education on the rescue world and our countries dog crisis. We also feature an updated list of current nationwide charities, fundraisers, events and businesses that profit the rescue community and support the maintenance of shelters and dog wellness. 
             <br><span class="orange">Search</span> for local and non-local rescues and dogs who need advocacy. This helps our dog shelters maintain space, and it helps to expose adoptable dogs looking for homes. Attention attracts success in adoptions and fundraising needs. 
-             <br>Your search results will include locations and contact information, so that you can reach out, share stories to social media, and offer support. Many rescue groups operate heavily on social media where they share updates, fundraising campaigns, and urgent needs for shelter dogs awaiting for fosters and adoptions. You can also search by zip code for shelters and any community discussion.  
+             <br>Your search results will include locations and contact information, so that you can reach out, share stories to social media, and offer support. Many rescue groups operate heavily on social media where they share updates, fundraising campaigns, and urgent needs for shelter dogs awaiting for fosters and adoptions. You can also search for nearby shelters by ZIP code.
         </h3>
         <img class="about__img" src="assets/pawprintrowyellow.png" alt="paw print row">
         <p class="section__para">
@@ -165,6 +176,8 @@
           <li class="footer__list--item">
             <a href="#search" class="footer__list--link">Search</a>
           </li>
+          <li class="footer__list--item">
+            <a href="#education" class="footer__list--link">Education</a>
         </ul>
       </div>
        <div class="footer__copyright">Copyright &copy; 2026 The Dog Rescue Interface. All rights reserved.

@@ -45,9 +45,9 @@ function toggleModal() {
    }
 }
 
-async function fetchRescueData(query) {
-    const params = new URLSearchParams({ search: query });
-    const response = await fetch(`/api/search?${params}`);
+async function fetchRescueData(query, endpoint = '/api/search', parameter = 'search') {
+    const params = new URLSearchParams({ [parameter]: query });
+    const response = await fetch(`${endpoint}?${params}`);
 
     if (!response.ok) {
         const error = await response.json().catch(() => ({}));
@@ -93,8 +93,8 @@ function getExternalLink(attributes) {
     }
 }
 
-function renderResults({ items, included }) {
-    const resultsContainer = document.getElementById('search-results');
+function renderResults({ items, included }, containerId = 'search-results') {
+    const resultsContainer = document.getElementById(containerId);
     resultsContainer.innerHTML = '';
 
     if (!items.length) {
@@ -182,14 +182,46 @@ async function searchDogs() {
     }
 }
 
+async function searchSheltersByZip() {
+    const resultsContainer = document.getElementById('zip-search-results');
+    const query = document.getElementById('zip-search').value.trim();
+    const searchButton = document.getElementById('zip-search-button');
+
+    if (!/^\d{5}$/.test(query)) {
+        resultsContainer.textContent = 'Enter a valid 5-digit US ZIP code.';
+        return;
+    }
+
+    searchButton.disabled = true;
+    resultsContainer.textContent = 'Searching for shelters within 25 miles...';
+
+    try {
+        const results = await fetchRescueData(query, '/api/shelters/nearby', 'zip');
+        renderResults(results, 'zip-search-results');
+    } catch (error) {
+        resultsContainer.textContent = error.message;
+        console.error(error);
+    } finally {
+        searchButton.disabled = false;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const searchButton = document.getElementById('dog-search-button');
     const searchInput = document.getElementById('dog-search');
+    const zipSearchButton = document.getElementById('zip-search-button');
+    const zipSearchInput = document.getElementById('zip-search');
 
     searchButton.addEventListener('click', searchDogs);
+    zipSearchButton.addEventListener('click', searchSheltersByZip);
     searchInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
             searchDogs();
+        }
+    });
+    zipSearchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            searchSheltersByZip();
         }
     });
 });

@@ -21,10 +21,14 @@ const stateCodes = {
 	'district of columbia': 'DC'
 };
 
-async function searchRescueGroups(url, filters = [], queryString = '') {
+async function searchRescueGroups(url, filters = [], queryString = '', filterRadius) {
 	const controller = new AbortController();
 	const timeout = setTimeout(() => controller.abort(), 15000);
 	try {
+		const data = {
+			...(filters.length ? { filters } : {}),
+			...(filterRadius ? { filterRadius } : {})
+		};
 		const apiResponse = await fetch(`${url}${queryString}`, {
 			method: 'POST',
 			signal: controller.signal,
@@ -32,7 +36,7 @@ async function searchRescueGroups(url, filters = [], queryString = '') {
 				'Content-Type': 'application/vnd.api+json',
 				Authorization: rescueGroupsKey
 			},
-			body: JSON.stringify({ data: filters.length ? { filters } : {} })
+			body: JSON.stringify({ data })
 		});
 		const payload = await apiResponse.json();
 		if (!apiResponse.ok) {
@@ -87,6 +91,36 @@ app.get('/api/search', async (request, response) => {
 			? 'RescueGroups request timed out.'
 			: error.message || 'RescueGroups could not be reached.';
 		response.status(502).json({ error: message });
+	}
+});
+
+app.get('/api/shelters/nearby', async (request, response) => {
+	const postalCode = typeof request.query.zip === 'string' ? request.query.zip.trim() : '';
+	if (!/^\d{5}$/.test(postalCode)) {
+		return response.status(400).json({ error: 'Enter a valid 5-digit US ZIP code.' });
+	}
+
+	if (!rescueGroupsKey) {
+		return response.status(500).json({ error: 'RESCUEGROUPS_API_KEY is not configured.' });
+	}
+
+	try {
+		const payload = await searchRescueGroups(
+			`${organizationsEndpoint}/shelter/`,
+			[],
+			'',
+			{ postalcode: postalCode, miles: 25 }
+		);
+		return response.json({
+			data: Array.isArray(payload.data)
+				? payload.data.map(item => ({ ...item, searchKind: 'organization' }))
+				: []
+		});
+	} catch (error) {
+		const message = error.name === 'AbortError'
+			? 'RescueGroups request timed out.'
+			: error.message || 'RescueGroups could not be reached.';
+		return response.status(502).json({ error: message });
 	}
 });
 

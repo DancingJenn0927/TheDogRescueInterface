@@ -285,6 +285,31 @@ button.not-loading:hover {
   text-align: left;
 }
 
+#zip-search-results {
+  width: min(90%, 1000px);
+  margin: 24px auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  text-align: left;
+}
+.dog-search__title {
+  margin: 36px 0 12px;
+  color: #2e3135;
+  text-align: center;
+}
+
+.zip-search__title {
+  margin: 36px 0 12px;
+  color: #2e3135;
+  text-align: center;
+}
+.dog-search__logo, .zip-search__logo {
+  color: #ff7518;
+  width: 16px;
+  height: 16px;
+}
+
 .dog-card {
   padding: 20px;
   border: 1px solid #d8dde2;
