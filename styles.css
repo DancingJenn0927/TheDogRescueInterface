@@ -304,10 +304,16 @@ button.not-loading:hover {
   color: #2e3135;
   text-align: center;
 }
-.dog-search__logo, .zip-search__logo {
+.dog-search__logo,
+.zip-search__logo {
   color: #ff7518;
   width: 16px;
   height: 16px;
+}
+.charities__icon {
+  color: #ff7518;
+  width: 24px;
+  height: 24px;
 }
 
 .dog-card {
@@ -368,7 +374,8 @@ section#about .section__subtitle {
   line-height: 1.6;
   color: #2e3135;
 }
-section#about .section__para {
+section#about,
+section#charities .section__para {
   font-size: 18px;
   line-height: 1.6;
   color: #2e3135;
@@ -376,7 +383,8 @@ section#about .section__para {
   margin-top: 24px;
   padding: 40px;
 }
-section#about .section__list {
+section#about,
+section#charities .section__list {
   padding: 20px;
   text-align: center;
   line-height: 1.6;
@@ -385,11 +393,15 @@ section#about .section__list {
   flex-direction: column;
   align-items: center;
 }
-.about__img {
+.charities__img {
   opacity: 0.6;
   box-shadow: 0 10px 15px rgba(255, 215, 0, 1);
+  width: min(100%, 360px);
+  height: auto;
+  display: block;
+  margin: 0 auto;
 }
-.about__img:hover {
+.charities__img:hover {
   opacity: 2;
 }
 
