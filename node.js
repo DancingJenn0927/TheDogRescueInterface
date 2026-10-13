@@ -1,129 +1,238 @@
-require('dotenv').config();
-const express = require('express');
+require("dotenv").config();
+const express = require("express");
 
 const app = express();
 const port = process.env.PORT || 3000;
 const rescueGroupsKey = process.env.RESCUEGROUPS_API_KEY;
 
-const animalsEndpoint = 'https://api.rescuegroups.org/v5/public/animals/search/available/dogs/';
-const organizationsEndpoint = 'https://api.rescuegroups.org/v5/public/orgs/search';
+const animalsEndpoint =
+  "https://api.rescuegroups.org/v5/public/animals/search/available/dogs/";
+const organizationsEndpoint =
+  "https://api.rescuegroups.org/v5/public/orgs/search";
 const stateCodes = {
-	'alabama': 'AL', 'alaska': 'AK', 'arizona': 'AZ', 'arkansas': 'AR', 'california': 'CA',
-	'colorado': 'CO', 'connecticut': 'CT', 'delaware': 'DE', 'florida': 'FL', 'georgia': 'GA',
-	'hawaii': 'HI', 'idaho': 'ID', 'illinois': 'IL', 'indiana': 'IN', 'iowa': 'IA',
-	'kansas': 'KS', 'kentucky': 'KY', 'louisiana': 'LA', 'maine': 'ME', 'maryland': 'MD',
-	'massachusetts': 'MA', 'michigan': 'MI', 'minnesota': 'MN', 'mississippi': 'MS', 'missouri': 'MO',
-	'montana': 'MT', 'nebraska': 'NE', 'nevada': 'NV', 'new hampshire': 'NH', 'new jersey': 'NJ',
-	'new mexico': 'NM', 'new york': 'NY', 'north carolina': 'NC', 'north dakota': 'ND', 'ohio': 'OH',
-	'oklahoma': 'OK', 'oregon': 'OR', 'pennsylvania': 'PA', 'rhode island': 'RI', 'south carolina': 'SC',
-	'south dakota': 'SD', 'tennessee': 'TN', 'texas': 'TX', 'utah': 'UT', 'vermont': 'VT',
-	'virginia': 'VA', 'washington': 'WA', 'west virginia': 'WV', 'wisconsin': 'WI', 'wyoming': 'WY',
-	'district of columbia': 'DC'
+  alabama: "AL",
+  alaska: "AK",
+  arizona: "AZ",
+  arkansas: "AR",
+  california: "CA",
+  colorado: "CO",
+  connecticut: "CT",
+  delaware: "DE",
+  florida: "FL",
+  georgia: "GA",
+  hawaii: "HI",
+  idaho: "ID",
+  illinois: "IL",
+  indiana: "IN",
+  iowa: "IA",
+  kansas: "KS",
+  kentucky: "KY",
+  louisiana: "LA",
+  maine: "ME",
+  maryland: "MD",
+  massachusetts: "MA",
+  michigan: "MI",
+  minnesota: "MN",
+  mississippi: "MS",
+  missouri: "MO",
+  montana: "MT",
+  nebraska: "NE",
+  nevada: "NV",
+  "new hampshire": "NH",
+  "new jersey": "NJ",
+  "new mexico": "NM",
+  "new york": "NY",
+  "north carolina": "NC",
+  "north dakota": "ND",
+  ohio: "OH",
+  oklahoma: "OK",
+  oregon: "OR",
+  pennsylvania: "PA",
+  "rhode island": "RI",
+  "south carolina": "SC",
+  "south dakota": "SD",
+  tennessee: "TN",
+  texas: "TX",
+  utah: "UT",
+  vermont: "VT",
+  virginia: "VA",
+  washington: "WA",
+  "west virginia": "WV",
+  wisconsin: "WI",
+  wyoming: "WY",
+  "district of columbia": "DC",
 };
 
-async function searchRescueGroups(url, filters = [], queryString = '', filterRadius) {
-	const controller = new AbortController();
-	const timeout = setTimeout(() => controller.abort(), 15000);
-	try {
-		const data = {
-			...(filters.length ? { filters } : {}),
-			...(filterRadius ? { filterRadius } : {})
-		};
-		const apiResponse = await fetch(`${url}${queryString}`, {
-			method: 'POST',
-			signal: controller.signal,
-			headers: {
-				'Content-Type': 'application/vnd.api+json',
-				Authorization: rescueGroupsKey
-			},
-			body: JSON.stringify({ data })
-		});
-		const payload = await apiResponse.json();
-		if (!apiResponse.ok) {
-			throw new Error(payload.errors?.[0]?.detail || payload.message || 'RescueGroups rejected the search request.');
-		}
-		return payload;
-	} finally {
-		clearTimeout(timeout);
-	}
+async function searchRescueGroups(
+  url,
+  filters = [],
+  queryString = "",
+  filterRadius,
+  filterProcessing,
+) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    const data = {
+      ...(filters.length ? { filters } : {}),
+      ...(filterRadius ? { filterRadius } : {}),
+      ...(filterProcessing ? { filterProcessing } : {}),
+    };
+    const apiResponse = await fetch(`${url}${queryString}`, {
+      method: "POST",
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/vnd.api+json",
+        Authorization: rescueGroupsKey,
+      },
+      body: JSON.stringify({ data }),
+    });
+    const payload = await apiResponse.json();
+    if (!apiResponse.ok) {
+      throw new Error(
+        payload.errors?.[0]?.detail ||
+          payload.message ||
+          "RescueGroups rejected the search request.",
+      );
+    }
+    return payload;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
-app.use(express.static('.'));
+app.use(express.static("."));
 
-app.get('/api/search', async (request, response) => {
-	const { search = '' } = request.query;
-	const searchValue = search.trim();
-	const stateCode = /^[A-Za-z]{2}$/.test(searchValue)
-		? searchValue.toUpperCase()
-		: stateCodes[searchValue.toLowerCase()];
+app.get("/api/search", async (request, response) => {
+  const { search = "" } = request.query;
+  const searchValue = search.trim();
+  const stateCode = /^[A-Za-z]{2}$/.test(searchValue)
+    ? searchValue.toUpperCase()
+    : stateCodes[searchValue.toLowerCase()];
 
-	if (!rescueGroupsKey) {
-		return response.status(500).json({ error: 'RESCUEGROUPS_API_KEY is not configured.' });
-	}
+  if (!rescueGroupsKey) {
+    return response
+      .status(500)
+      .json({ error: "RESCUEGROUPS_API_KEY is not configured." });
+  }
 
-	try {
-		if (stateCode) {
-			const organizationStateFilter = [{ fieldName: 'orgs.state', operation: 'equal', criteria: stateCode }];
-			const animalStateFilter = [{ fieldName: 'orgs.state', operation: 'equal', criteria: stateCode }];
-			const [animals, rescues, shelters] = await Promise.all([
-				searchRescueGroups(animalsEndpoint, animalStateFilter, '?include=orgs'),
-				searchRescueGroups(`${organizationsEndpoint}/rescue/`, organizationStateFilter),
-				searchRescueGroups(`${organizationsEndpoint}/shelter/`, organizationStateFilter)
-			]);
-			const results = [
-				...(Array.isArray(animals.data) ? animals.data.map(item => ({ ...item, searchKind: 'animal' })) : []),
-				...(Array.isArray(rescues.data) ? rescues.data.map(item => ({ ...item, searchKind: 'organization' })) : []),
-				...(Array.isArray(shelters.data) ? shelters.data.map(item => ({ ...item, searchKind: 'organization' })) : [])
-			];
-			return response.json({
-				data: results,
-				included: Array.isArray(animals.included) ? animals.included : []
-			});
-		}
+  try {
+    if (stateCode) {
+      const organizationStateFilter = [
+        { fieldName: "orgs.state", operation: "equal", criteria: stateCode },
+      ];
+      const animalStateFilter = [
+        { fieldName: "orgs.state", operation: "equal", criteria: stateCode },
+      ];
+      const [animals, rescues, shelters] = await Promise.all([
+        searchRescueGroups(animalsEndpoint, animalStateFilter, "?include=orgs"),
+        searchRescueGroups(
+          `${organizationsEndpoint}/rescue/`,
+          organizationStateFilter,
+        ),
+        searchRescueGroups(
+          `${organizationsEndpoint}/shelter/`,
+          organizationStateFilter,
+        ),
+      ]);
+      const results = [
+        ...(Array.isArray(animals.data)
+          ? animals.data.map((item) => ({ ...item, searchKind: "animal" }))
+          : []),
+        ...(Array.isArray(rescues.data)
+          ? rescues.data.map((item) => ({
+              ...item,
+              searchKind: "organization",
+            }))
+          : []),
+        ...(Array.isArray(shelters.data)
+          ? shelters.data.map((item) => ({
+              ...item,
+              searchKind: "organization",
+            }))
+          : []),
+      ];
+      return response.json({
+        data: results,
+        included: Array.isArray(animals.included) ? animals.included : [],
+      });
+    }
 
-		const filters = searchValue
-			? [{ fieldName: 'animals.searchString', operation: 'contains', criteria: searchValue }]
-			: [];
-		const payload = await searchRescueGroups(animalsEndpoint, filters, '?include=orgs&limit=100');
-		response.json(payload);
-	} catch (error) {
-		const message = error.name === 'AbortError'
-			? 'RescueGroups request timed out.'
-			: error.message || 'RescueGroups could not be reached.';
-		response.status(502).json({ error: message });
-	}
+    const pitBullSearchTerms = [
+      "pitbull",
+      "pit bull",
+      "American Pit Bull Terrier",
+      "American Staffordshire Terrier",
+      "Staffordshire Bull Terrier",
+      "American Bully",
+    ];
+    const isPitBullSearch =
+      searchValue.toLowerCase().replace(/[^a-z0-9]/g, "") === "pitbull";
+    const searchTerms = isPitBullSearch ? pitBullSearchTerms : [searchValue];
+    const filters = searchTerms
+      .filter(Boolean)
+      .map((term) => ({
+        fieldName: "animals.searchString",
+        operation: "contains",
+        criteria: term,
+      }));
+    const filterProcessing =
+      filters.length > 1
+        ? `(${filters.map((_, index) => index + 1).join(" or ")})`
+        : "";
+    const payload = await searchRescueGroups(
+      animalsEndpoint,
+      filters,
+      "?include=orgs&limit=100",
+      undefined,
+      filterProcessing,
+    );
+    response.json(payload);
+  } catch (error) {
+    const message =
+      error.name === "AbortError"
+        ? "RescueGroups request timed out."
+        : error.message || "RescueGroups could not be reached.";
+    response.status(502).json({ error: message });
+  }
 });
 
-app.get('/api/shelters/nearby', async (request, response) => {
-	const postalCode = typeof request.query.zip === 'string' ? request.query.zip.trim() : '';
-	if (!/^\d{5}$/.test(postalCode)) {
-		return response.status(400).json({ error: 'Enter a valid 5-digit US ZIP code.' });
-	}
+app.get("/api/shelters/nearby", async (request, response) => {
+  const postalCode =
+    typeof request.query.zip === "string" ? request.query.zip.trim() : "";
+  if (!/^\d{5}$/.test(postalCode)) {
+    return response
+      .status(400)
+      .json({ error: "Enter a valid 5-digit US ZIP code." });
+  }
 
-	if (!rescueGroupsKey) {
-		return response.status(500).json({ error: 'RESCUEGROUPS_API_KEY is not configured.' });
-	}
+  if (!rescueGroupsKey) {
+    return response
+      .status(500)
+      .json({ error: "RESCUEGROUPS_API_KEY is not configured." });
+  }
 
-	try {
-		const payload = await searchRescueGroups(
-			organizationsEndpoint,
-			[],
-			'?limit=100',
-			{ postalcode: postalCode, miles: 25 }
-		);
-		return response.json({
-			data: Array.isArray(payload.data)
-				? payload.data.map(item => ({ ...item, searchKind: 'organization' }))
-				: []
-		});
-	} catch (error) {
-		const message = error.name === 'AbortError'
-			? 'RescueGroups request timed out.'
-			: error.message || 'RescueGroups could not be reached.';
-		return response.status(502).json({ error: message });
-	}
+  try {
+    const payload = await searchRescueGroups(
+      organizationsEndpoint,
+      [],
+      "?limit=100",
+      { postalcode: postalCode, miles: 25 },
+    );
+    return response.json({
+      data: Array.isArray(payload.data)
+        ? payload.data.map((item) => ({ ...item, searchKind: "organization" }))
+        : [],
+    });
+  } catch (error) {
+    const message =
+      error.name === "AbortError"
+        ? "RescueGroups request timed out."
+        : error.message || "RescueGroups could not be reached.";
+    return response.status(502).json({ error: message });
+  }
 });
 
 app.listen(port, () => {
-	console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });
