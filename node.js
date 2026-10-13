@@ -108,7 +108,7 @@ app.get('/api/shelters/nearby', async (request, response) => {
 		const payload = await searchRescueGroups(
 			organizationsEndpoint,
 			[],
-			'?limit=100&sort=%2Bdistance',
+			'?limit=100',
 			{ postalcode: postalCode, miles: 25 }
 		);
 		return response.json({
