@@ -84,7 +84,7 @@ app.get('/api/search', async (request, response) => {
 		const filters = searchValue
 			? [{ fieldName: 'animals.searchString', operation: 'contains', criteria: searchValue }]
 			: [];
-		const payload = await searchRescueGroups(animalsEndpoint, filters, '?include=orgs');
+		const payload = await searchRescueGroups(animalsEndpoint, filters, '?include=orgs&limit=100');
 		response.json(payload);
 	} catch (error) {
 		const message = error.name === 'AbortError'
